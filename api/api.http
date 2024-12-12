@@ -1,0 +1,28 @@
+GET http://localhost:3000/places?text=R. Inês Voss - Vorstadt, Blumenau
+
+
+###
+GET http://localhost:3000/places?text=R. General Osorio, 1705
+
+###
+@originId = ChIJMRCvQAwi35QRpP5rqM-agMg
+
+@destinationId = ChIJYRt3AK4e35QRvoWkktFvC2Q
+###
+GET http://localhost:3000/directions?originId={{ originId }}&destinationId={{ destinationId }}
+
+###
+POST http://localhost:3000/routes
+Content-Type: application/json
+
+{
+    "name": "rota 1",
+    "source_id": "{{ originId }}",
+    "destination_id": "{{ destinationId }}"
+}
+
+###
+GET http://localhost:3000/routes
+
+###
+GET http://localhost:3000/routes/67586b41722bef3fe382f26d
