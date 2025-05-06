@@ -4,59 +4,80 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 
-	"github.com/routes/simulator/internal"
-	"github.com/segmentio/kafka-go"
+	"github.com/devfullcycle/imersao20/simulator/internal"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+
+	"github.com/segmentio/kafka-go"
 )
 
-func main () {
-	mongoStr := "mongodb://admin:admin@localhost:27017/nest?authSource=admin"
-	mongoConnection, err := mongo.Connect(context.Background(), options.Client().ApplyURI(mongoStr))
+func main() {
+	mongoURI := getEnv("MONGO_URI", "mongodb://admin:admin@mongo:27017/routes?authSource=admin")
+	kafkaBroker := getEnv("KAFKA_BROKER", "kafka:9092")
+	kafkaRouteTopic := getEnv("KAFKA_ROUTE_TOPIC", "route")
+	kafkaFreightTopic := getEnv("KAFKA_FREIGHT_TOPIC", "freight")
+	kafkaSimulationTopic := getEnv("KAFKA_SIMULATION_TOPIC", "simulation")
+	kafkaGroupID := getEnv("KAFKA_GROUP_ID", "route-group")
+
+	mongoConnection, err := mongo.Connect(context.Background(), options.Client().ApplyURI(mongoURI))
 	if err != nil {
-		panic(err)
-	}	
+		log.Fatalf("Failed to connect to MongoDB: %v", err)
+	}
 
 	freightService := internal.NewFreightService()
 	routeService := internal.NewRouteService(mongoConnection, freightService)
 
-	channelDriverMoved := make(chan *internal.DriverMovedEvent)
-	kafkaBroker := "localhost:9092"
+	chDriverMoved := make(chan *internal.DriverMovedEvent)
+	chFreightCalculated := make(chan *internal.FreightCalculatedEvent)
 
 	freightWriter := &kafka.Writer{
-		Addr: kafka.TCP(kafkaBroker),
-		Topic: "freight",
+		Addr:     kafka.TCP(kafkaBroker),
+		Topic:    kafkaFreightTopic,
 		Balancer: &kafka.LeastBytes{},
 	}
-	
-	simulatorWriter := &kafka.Writer{
-		Addr: kafka.TCP(kafkaBroker),
-		Topic: "simulator",
+	simulationWriter := &kafka.Writer{
+		Addr:     kafka.TCP(kafkaBroker),
+		Topic:    kafkaSimulationTopic,
 		Balancer: &kafka.LeastBytes{},
 	}
+
+	hub := internal.NewEventHub(
+		routeService,
+		mongoConnection,
+		chDriverMoved,
+		chFreightCalculated,
+		freightWriter,
+		simulationWriter,
+	)
 
 	routeReader := kafka.NewReader(kafka.ReaderConfig{
 		Brokers: []string{kafkaBroker},
-		Topic: "route",
-		GroupID:  "simulator",
+		Topic:   kafkaRouteTopic,
+		GroupID: kafkaGroupID,
 	})
 
-	hub := internal.NewEventHub(routeService, mongoConnection, channelDriverMoved, freightWriter, simulatorWriter)
+	fmt.Println("Consuming events from 'route' topic...")
 
-	fmt.Println("Starting simulator")
 	for {
-		message, err := routeReader.ReadMessage(context.Background())
+		m, err := routeReader.ReadMessage(context.Background())
 		if err != nil {
-			log.Printf("error: %v", err)
+			log.Printf("Error reading message: %v\n", err)
 			continue
 		}
 
 		go func(msg []byte) {
-			err = hub.HandleEvent(message.Value)
-			if err != nil {
-				log.Printf("error handling event: %v", err)
+			if err := hub.HandleEvent(msg); err != nil {
+				log.Printf("Error handling event: %v\n", err)
 			}
-		}(message.Value)
+		}(m.Value)
 	}
+}
+
+func getEnv(key, fallback string) string {
+	if value, exists := os.LookupEnv(key); exists {
+		return value
+	}
+	return fallback
 }
