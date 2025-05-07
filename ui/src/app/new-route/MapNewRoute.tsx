@@ -1,26 +1,26 @@
-'use client'
+"use client";
 
-import { useEffect, useRef } from 'react'
-import { useMap } from '../../hooks/useMap'
-import { DirectionsData } from '../../utils/models'
+import { useEffect, useRef } from "react";
+import { useMap } from "../../hooks/useMap";
+import { DirectionsData } from "../../utils/models";
 
 export type MapNewRouteProps = {
-  directionsData: DirectionsData
-}
+  directionsData: DirectionsData;
+};
 
 export function MapNewRoute(props: MapNewRouteProps) {
-  const { directionsData } = props
-  const mapContainerRef = useRef<HTMLDivElement>(null)
-  const map = useMap(mapContainerRef)
+  const { directionsData } = props;
+  const mapContainerRef = useRef<HTMLDivElement>(null);
+  const map = useMap(mapContainerRef);
 
   useEffect(() => {
     if (!map || !directionsData) {
-      return
+      return;
     }
 
-    map.removeAllRoutes()
+    map.removeAllRoutes();
     map.addRouteWithIcons({
-      routeId: '1',
+      routeId: "1",
       startMarkerOptions: {
         position: directionsData.routes[0].legs[0].start_location,
       },
@@ -30,8 +30,8 @@ export function MapNewRoute(props: MapNewRouteProps) {
       carMarkerOptions: {
         position: directionsData.routes[0].legs[0].start_location,
       },
-    })
-  }, [map, directionsData])
+    });
+  }, [map, directionsData]);
 
-  return <div className="w-2/3 h-full" ref={mapContainerRef} />
+  return <div className="w-2/3 h-full" ref={mapContainerRef} />;
 }

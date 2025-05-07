@@ -1,13 +1,18 @@
-import { NextRequest, NextResponse } from 'next/server'
+//routes
 
-export async function GET(request: NextRequest, { params }: { params: Promise<{ routeId: string }> }) {
-  const { routeId } = await params
-  const response = await fetch(`http://localhost:3000/routes/${routeId}`, {
-    cache: 'force-cache',
+import { NextRequest, NextResponse } from "next/server";
+
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ routeId: string }> }
+) {
+  const { routeId } = await params;
+  const response = await fetch(`${process.env.NEST_API_URL}/routes/${routeId}`, {
+    cache: "force-cache",
     next: {
-      tags: [`routes-${routeId}`, 'routes'],
+      tags: [`routes-${routeId}`, "routes"],
     },
-  })
-  const data = await response.json()
-  return NextResponse.json(data)
+  });
+  const data = await response.json();
+  return NextResponse.json(data);
 }
