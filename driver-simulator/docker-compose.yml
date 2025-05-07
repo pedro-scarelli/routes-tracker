@@ -1,6 +1,6 @@
 include:
-  - ../mongodb/docker-compose.yaml
-  - ../kafka/docker-compose.yaml
+  - ../mongodb/docker-compose.yml
+  - ../kafka/docker-compose.yml
 
 services:
 

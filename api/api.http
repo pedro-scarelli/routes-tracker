@@ -1,13 +1,13 @@
-GET http://localhost:3000/places?text=R. Inês Voss - Vorstadt, Blumenau
-
-
-###
-GET http://localhost:3000/places?text=R. General Osorio, 1705
+GET http://localhost:3000/places?text=av governador valadares, betim, 1000
 
 ###
-@originId = ChIJMRCvQAwi35QRpP5rqM-agMg
+GET http://localhost:3000/places?text=av amazonas, belo horizonte, 1000
 
-@destinationId = ChIJYRt3AK4e35QRvoWkktFvC2Q
+###
+ ChIJMyzPysqQpgARlznSOl55NVs
+@originId = ChIJmx-wX0rCpgARjxH_rJ8d5do
+@destinationId = ChIJTcM3WRKWpgARIBxMZeldEtM
+
 ###
 GET http://localhost:3000/directions?originId={{ originId }}&destinationId={{ destinationId }}
 
@@ -22,7 +22,10 @@ Content-Type: application/json
 }
 
 ###
+POST http://localhost:3000/routes/67596c02396abb18d0c69574/start
+
+###
 GET http://localhost:3000/routes
 
 ###
-GET http://localhost:3000/routes/67586b41722bef3fe382f26d
+GET http://localhost:3000/routes/674ef78bab1148ea9161c23b 
