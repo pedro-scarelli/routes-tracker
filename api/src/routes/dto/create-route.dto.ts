@@ -3,3 +3,4 @@ export class CreateRouteDto {
   source_id: string;
   destination_id: string;
 }
+//dto - data transfer object

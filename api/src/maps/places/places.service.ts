@@ -4,7 +4,6 @@ import {
   PlaceInputType,
 } from '@googlemaps/google-maps-services-js';
 import { ConfigService } from '@nestjs/config';
-
 @Injectable()
 export class PlacesService {
   constructor(
