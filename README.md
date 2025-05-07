@@ -10,7 +10,7 @@ Docker e Docker compose para executar a aplicação.
 
 Rode todas as aplicações com o comando:
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 ## Rotas da aplicação:
 
