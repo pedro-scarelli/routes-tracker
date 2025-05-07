@@ -26,7 +26,7 @@
 **/node_modules
 **/npm-debug.log
 **/obj
-**/secrets.dev.yaml
-**/values.dev.yaml
+**/secrets.dev.yml
+**/values.dev.yml
 LICENSE
 README.md
