@@ -3,7 +3,7 @@ Projeto desenvolvido durante a semana de irmesão Fullcycle 20
 
 ## Requerimentos
 
-Chave da API do Google Maps, para isso, é necessário criar uma chave de API no Google Cloud Platform (passo a passo no leia-me do projeto nestjs-api)
+Chave da API do Google Maps, para isso, é necessário criar uma chave de API no Google Cloud Platform (passo a passo no leia-me do projeto api)
 Docker e Docker compose para executar a aplicação.
 
 ## Rodar a aplicação
